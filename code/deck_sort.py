@@ -5,6 +5,7 @@
 #---------------------------------
 # Librerías utilizadas
 import numpy as np
+import timeit
 #---------------------------------
 # Método de insercion directa
 def inser_sort(array):
@@ -20,6 +21,7 @@ def inser_sort(array):
 
 #---------------------------------
 # Método mezcla
+# ordenamiento
 def sort(L,R):
     NL = L.size
     NR = R.size
@@ -41,7 +43,7 @@ def sort(L,R):
     elif j < NR:
         answer = np.hstack([answer, R[j::]])
     return answer
-        
+# mezcla
 def mix(array):
     N = array.size
     if N == 1:
@@ -50,4 +52,18 @@ def mix(array):
         if array[0] >= array[1]:
             return array[1::-1]
     return sort(mix(array[0:N/2]), mix(array[N/2:N]))
-
+#---------------------------------
+trials = np.hstack([np.array(range(10,100,10)),np.array(range(100,5000,100))])
+k = trials.size
+elapsed_mix = np.empty(k)
+elapsed_ins = np.empty(k)
+j = 1
+for i in trials:
+    a = np.floor(np.random.rand(i) * 100)
+    start_time = timeit.default_timer()
+    mix(a)
+    elapsed_mix[j] = timeit.default_timer() - start_time
+    start_time = timeit.default_timer()
+    inser_sort(a)
+    elapsed_ins[j] = timeit.default_timer() - start_time
+    j = j +1
