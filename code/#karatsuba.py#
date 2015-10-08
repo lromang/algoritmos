@@ -1,0 +1,81 @@
+## Luis Manuel Román García 000117077
+## María Fernanda Mora Alba 000103596
+import numpy as np
+from decimal import *
+######################################################################################
+## Split the numbers in two (precise)
+def int_length_p(integer):
+  return  Decimal(integer).log10().quantize(Decimal('.1'), rounding=ROUND_DOWN) + 1
+
+## Split the numbers in two (precise)
+def split_num_p(integer):
+  integer    = Decimal(integer)
+  int_size   = int_length_p(integer)//2
+  result     = np.zeros(3)
+  divider    = Decimal(10)
+  divider    = divider**int_size
+  first_hal  = integer//divider
+  second_hal = integer - first_hal*divider     
+  result[2]  = divider
+  result[0]  = first_hal
+  result[1]  = second_hal
+  return result
+
+## Multiply the numbers
+def karatsuba(int1, int2):
+  ## Tamaño de números
+  length1 = int_length_p(int1)
+  length2 = int_length_p(int2)
+  if length1 <= 2 or length2 <= 2:
+    return int1 * int2
+  else:
+    ## Dividir los arreglos en dos sub partes
+    int1_split = split_num_p(int1)
+    int2_split = split_num_p(int2)
+    ## llevar a cabo la multiplicación recursiva
+    ac = karatsuba(int1_split[0], int2_split[0])
+    bd = karatsuba(int1_split[1], int2_split[1])
+    ab = np.floor(np.sum(int1_split[0:2]))
+    cd = np.floor(np.sum(int2_split[0:2]))
+    apb_dpc = karatsuba(ab, cd) - ac -bd
+  return np.power(int1_split[2],2)*ac + int1_split[2]*apb_dpc + bd
+
+######################################################################################
+## Presicion Kratsuba
+getcontext().prec = 60
+## Split the numbers in two (precise)
+def int_length_p(integer):
+  return  Decimal(integer).log10().quantize(Decimal('.1'), rounding=ROUND_DOWN) + 1
+
+## Split the numbers in two (precise)
+def split_num_p(integer):
+  integer    = Decimal(integer)
+  int_size   = int_length_p(integer)//2
+  result     = np.zeros(3)
+  divider    = Decimal(10)
+  divider    = divider**int_size
+  first_hal  = integer//divider
+  second_hal = integer - first_hal*divider     
+  result[2]  = divider
+  result[0]  = first_hal
+  result[1]  = second_hal
+  return result
+
+## Multiply the numbers
+def karatsuba_p(int1, int2):
+  ## Tamaño de números
+  length1 = int_length_p(int1)
+  length2 = int_length_p(int2)
+  if length1 <= 2 or length2 <= 2:
+    return int1 * int2
+  else:
+    ## Dividir los arreglos en dos sub partes
+    int1_split = split_num_p(int1)
+    int2_split = split_num_p(int2)
+    ## llevar a cabo la multiplicación recursiva
+    ac = karatsuba_p(int1_split[0], int2_split[0])
+    bd = karatsuba_p(int1_split[1], int2_split[1])
+    ab = int1_split[0] + int1_split[1]
+    cd = int2_split[0] + int2_split[1]
+    apb_dpc = karatsuba_p(ab, cd) - ac -bd
+    return np.power(int1_split[2], 2 )*ac + int1_split[2]*apb_dpc + bd

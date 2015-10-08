@@ -1,0 +1,14 @@
+# Luis Manuel Roman Garcia
+# Maria Fernanda Mora Alba
+import numpy as np
+# Problema de prueba,
+# A es la matriz de restricciones, 
+# z es la funcion objetivo
+# b es el vector de restricciones
+A = np.array([[2,3],[4,1],[2,1]])
+z = np.array([21,31])
+b = np.array([25,32])
+
+def simplex(A, z, b):
+    
+    return sol

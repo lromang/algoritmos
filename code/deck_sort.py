@@ -67,3 +67,6 @@ for i in trials:
     inser_sort(a)
     elapsed_ins[j] = timeit.default_timer() - start_time
     j = j +1
+# Guardamos resultados
+np.save("/home/luis/Documents/oto2015/algoritmos/code/mix.txt",elapsed_mix)
+np.save("/home/luis/Documents/oto2015/algoritmos/code/ins.txt",elapsed_ins)
