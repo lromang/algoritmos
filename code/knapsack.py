@@ -153,14 +153,24 @@ def knapsack_bu(n, W):
 ############### Bottom Up Catalan  ################
 ###################################################
 def catalan_bu(N):
+  # Sumar 1 a la N es un artificio para cuadrar todos
+  # los indices.
+  N = N + 1
+  # Si N = 0 o N = 1 regreso 1
   if N == 0 or N == 1:
     return 1
   else:
-    sol = np.zeros(N)
-    sol[0] = 1
-    for i in range(N)[1:]:
-      sol[i] =  sum(sol[(i-1):N])*sum(sol[:(N - i + 1)])
-  return sum(sol)
+    sol     = np.zeros(N)
+    sol[0]  = 1
+    cat_sum = 0
+    for j in range(N)[1:]:
+      # Almaceno los valores de la suma
+      cat_sum = 0
+      for i in range(j + 1):
+        # Llevo a cabo la suma
+        cat_sum  = cat_sum + sol[i]*sol[j- i - 1]
+      sol[j]     = cat_sum
+  return sol[N - 1]
 
 
 ##############################################################################
