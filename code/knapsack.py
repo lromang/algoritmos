@@ -1,19 +1,33 @@
+## Luis Manuel Roman Garcia
+## 000117077
+
 ##################################################
 ## Rutinas para resolver el problema de la mochila
+## y secuencias de numeros de catalan
 ## utilizando programación dinámica.
 ##################################################
+
+
+##################################################
 ## Librerías utilizadas
+##################################################
 import numpy as np
+import math
+
+##############################################################################
+##############################################################################
+################################### TOP DOWN #################################
+##############################################################################
+##############################################################################
 
 ###################################################
-#################### Top Down #####################
+######### Top Down knapsack (recursivo) ###########
+###################################################
 ## Regresa el valor optimo que puede ser alcanzado
 ## introduciendo objetos de tamaño w_i y utilidad
 ## v_i dentro de una mochila de capacidad W
 ## utilizando el paradigma recursivo top-down.
 ###################################################
-
-
 def knapsack_td(i, W):
   ##############################
   # i: ínidce de interés.
@@ -21,11 +35,8 @@ def knapsack_td(i, W):
   ##############################
   # Si la mochila no tiene capacidad o
   # si no hay objetos regresamos 0
-  if W == 0 or i == -1:
+  if i == -1:
     return 0
-  # Si hay un único objeto lo regresamos
-  if v.size == 1:
-    return v[i]
   else:
     # Si el peso del objeto es menor que la
     # capacidad de la mochila vemos si nos
@@ -37,36 +48,149 @@ def knapsack_td(i, W):
       return knapsack_td(i - 1, W)
 
 ###################################################
-################### Bottom Up #####################
+######## Top Down knapsack (memoizacion) ##########
+###################################################
+## Regresa el valor optimo que puede ser alcanzado
+## introduciendo objetos de tamaño w_i y utilidad
+## v_i dentro de una mochila de capacidad W
+## utilizando el paradigma recursivo top-down, con
+## memoizacion.
+###################################################
+def knapsack_td_m(i, W):
+  ##############################
+  # i: ínidce de interés.
+  # W: capacidad de la mochila.
+  ##############################
+  # Si la mochila no tiene capacidad o
+  # si no hay objetos regresamos 0
+  if i == -1:
+    return 0
+  else:
+    # Si el peso del objeto es menor que la
+    # capacidad de la mochila vemos si nos
+    # conviene meterlo o no.
+    if knapsack[i, W] < 0:
+      # Verificamos si ya contabamos con el
+      # valor que se desea calcular.
+      if W - w[i] >= 0:
+        knapsack[i, W] = max(knapsack_td_m(i - 1, W),
+                             v[i] + knapsack_td_m(i - 1, W - w[i]))
+      else:
+        # Si no cabe el objeto no lo metemos.
+        knapsack[i, W] = knapsack_td_m(i - 1, W)
+    return knapsack[i, W]
+
+###################################################
+########## Top Down Catalan (recursivo) ###########
+###################################################
+## Regresa el numero de catalan correspondiente
+## al valor N usando recursion.
+###################################################
+def catalan_td(N):
+  ##############################
+  # N es el indice del numero de
+  # catalan.
+  ##############################
+  if N == 1 or N == 0:
+    return 1
+  else:
+    catalan = 0
+    for i in range(N + 1)[1:]:
+      catalan = catalan + catalan_td(i - 1) * catalan_td(N - i)
+    return catalan
+
+###################################################
+######### Top Down Catalan (memoizacion) ##########
+###################################################
+## Regresa el numero de catalan correspondiente
+## al valor N usando recursion y el metodo de
+## memoizacion.
+###################################################
+def catalan_td_m(N):
+  ##############################
+  # N es el indice del numero de
+  # catalan.
+  ##############################
+  if N == 1 or N == 0:
+    return 1
+  else:
+    if catalan_calc[N] < 0:
+      catalan = 0
+      for i in range(N + 1)[1:]:
+        catalan = catalan + catalan_td(i - 1) * catalan_td(N - i)
+      catalan_calc[N] = catalan
+    return catalan_calc[N]
+
+##############################################################################
+##############################################################################
+################################## BOTTOM UP #################################
+##############################################################################
+##############################################################################
+
+###################################################
+############### Bottom Up Knapsack ################
+###################################################
 ## Regresa el valor optimo que puede ser alcanzado
 ## introduciendo objetos de tamaño w_i y utilidad
 ## v_i dentro de una mochila de capacidad W
 ## utilizando el paradigma recursivo bottom-up.
 ###################################################
-def knapsack_bu(n, W):
+#def knapsack_bu(n, W):
   ##############################
   # i: ínidce de interés.
   # W: capacidad de la mochila.
   ##############################
-  V = np.zeros(W)
-y  for j in range(W)[1:]:
-    for i in range(n):
-      if w[i] <= j and (v[i] + V[j - w[i]]) > V[j]:
-        V[j] = v[i] + V[j - w[i]]
-  return V
+  #V = np.zeros(W)
+  #y  for j in range(W)[1:]:
+   # for i in range(n):
+    #  if w[i] <= j and (v[i] + V[j - w[i]]) > V[j]:
+     #   V[j] = v[i] + V[j - w[i]]
+  #return V
+
+###################################################
+############### Bottom Up Catalan  ################
+###################################################
+def catalan_bu(N):
+  if N == 0 or N == 1:
+    return 1
+  else:
+    sol = np.zeros(N)
+    sol[0] = 1
+    for i in range(N)[1:]:
+      sol[i] =  sum(sol[(i-1):N])*sum(sol[:(N - i + 1)])
+  return sum(sol)
 
 
+##############################################################################
+##############################################################################
+################################### PRUEBAS ##################################
+##############################################################################
 
-##################################################
-## Pruebas
-##################################################
+##############################################################################
+## TOP DOWN
+##############################################################################
+
+##############################################################################
+## Knapsack
 W = 20
 w = np.array([11, 7, 5, 4, 3, 3, 3, 2, 2, 2, 2 ,1])
 v = np.array([20, 10, 11, 5, 25, 50, 15, 12, 6, 4, 5, 30])
 i = w.size - 1
 n = i + 1
+## Matriz para memoizacion
+knapsack = -1*np.ones([n + 1, W + 1])
 ## Top Down
-sol_td = knapsack_td(i, W)
+sol_td   = knapsack_td(i, W)
+sol_td_m = knapsack_td_m(i, W)
 ## Bottom Up
 sol_bu = knapsack_bu(n, W)
-##################################################
+##############################################################################
+## Catalan
+N = 5
+catalan_calc  = -1*np.ones(N + 1)
+sol_catalan   = catalan_td(N)
+sol_catalan_m = catalan_td_m(N)
+
+##############################################################################
+## BOTTOM UP
+##############################################################################
