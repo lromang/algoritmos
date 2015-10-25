@@ -143,34 +143,34 @@ def knapsack_bu(n, W):
   V = np.zeros([n, W])
   for i in range(n):
     for j in range(W):
-      if w[i] <= j:
-        V[i,j] = max(V[i, j], v[i] + V[i, j - w[i]])
+      if w[i] <= j :
+        V[i, j] = max(V[i - 1, j], v[i] + V[i - 1, j - w[i]])
       else:
-        V[i,j] = V[i-1, j]
+        V[i, j] = V[i - 1, j]
   return V[i, j]
 
 ###################################################
 ############### Bottom Up Catalan  ################
 ###################################################
 def catalan_bu(N):
-  # Sumar 1 a la N es un artificio para cuadrar todos
-  # los indices.
-  N = N + 1
-  # Si N = 0 o N = 1 regreso 1
+  # Si N = 0 o N = 1 regreso 1.
   if N == 0 or N == 1:
     return 1
   else:
-    sol     = np.zeros(N)
+    sol     = np.zeros(N + 1)
     sol[0]  = 1
     cat_sum = 0
-    for j in range(N)[1:]:
-      # Almaceno los valores de la suma
+    for j in range(N + 1)[1:]:
+      # En este for se almacenan los
+      # valores de cat_sum en sol.
       cat_sum = 0
       for i in range(j + 1):
-        # Llevo a cabo la suma
+        # En este for se calcula
+        # la suma acumulada de
+        # los valores anteriores.
         cat_sum  = cat_sum + sol[i]*sol[j- i - 1]
       sol[j]     = cat_sum
-  return sol[N - 1]
+  return sol[N]
 
 
 ##############################################################################
@@ -204,4 +204,8 @@ sol_catalan_m = catalan_td_m(N)
 ##############################################################################
 ## BOTTOM UP
 ##############################################################################
-sol_bu = knapsack_bu(i,W)
+## Knapsack
+sol_bu = knapsack_bu(n,W)
+## Catalan
+N = 20
+sol_catalan_bu = catalan_bu(N)
