@@ -135,17 +135,19 @@ def catalan_td_m(N):
 ## v_i dentro de una mochila de capacidad W
 ## utilizando el paradigma recursivo bottom-up.
 ###################################################
-#def knapsack_bu(n, W):
+def knapsack_bu(n, W):
   ##############################
   # i: ínidce de interés.
   # W: capacidad de la mochila.
   ##############################
-  #V = np.zeros(W)
-  #y  for j in range(W)[1:]:
-   # for i in range(n):
-    #  if w[i] <= j and (v[i] + V[j - w[i]]) > V[j]:
-     #   V[j] = v[i] + V[j - w[i]]
-  #return V
+  V = np.zeros([n, W])
+  for i in range(n):
+    for j in range(W):
+      if w[i] <= j:
+        V[i,j] = max(V[i, j], v[i] + V[i, j - w[i]])
+      else:
+        V[i,j] = V[i-1, j]
+  return V[i, j]
 
 ###################################################
 ############### Bottom Up Catalan  ################
@@ -182,8 +184,6 @@ knapsack = -1*np.ones([n + 1, W + 1])
 ## Top Down
 sol_td   = knapsack_td(i, W)
 sol_td_m = knapsack_td_m(i, W)
-## Bottom Up
-sol_bu = knapsack_bu(n, W)
 ##############################################################################
 ## Catalan
 N = 5
@@ -194,3 +194,4 @@ sol_catalan_m = catalan_td_m(N)
 ##############################################################################
 ## BOTTOM UP
 ##############################################################################
+sol_bu = knapsack_bu(i,W)
